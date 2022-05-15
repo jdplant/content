@@ -105,6 +105,7 @@ def clear_trailing_whitespace(res):
         index += 1
     return res
 
+
 def filter_and_save_unseen_incident(incidents: List, limit: int, number_of_already_filtered_incidents: int) -> List:
     """
     Filters incidents that were seen already and saves the unseen incidents to LastRun object.

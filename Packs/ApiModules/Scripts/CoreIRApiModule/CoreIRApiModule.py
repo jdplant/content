@@ -138,7 +138,8 @@ class CoreClient(BaseClient):
 
     def get_incidents(self, incident_id_list=None, lte_modification_time=None, gte_modification_time=None,
                       lte_creation_time=None, gte_creation_time=None, status=None, sort_by_modification_time=None,
-                      sort_by_creation_time=None, page_number=0, limit=100, gte_creation_time_milliseconds=0):
+                      starred=None, starred_incidents_fetch_window=None, sort_by_creation_time=None, page_number=0,
+                      limit=100, gte_creation_time_milliseconds=0):
         """
         Filters and returns incidents
 
@@ -147,6 +148,8 @@ class CoreClient(BaseClient):
         :param gte_modification_time: string of time format "2019-12-31T23:59:00"
         :param lte_creation_time: string of time format "2019-12-31T23:59:00"
         :param gte_creation_time: string of time format "2019-12-31T23:59:00"
+        :param starred_incidents_fetch_window: string of time format "2019-12-31T23:59:00"
+        :param starred: True if the incident is starred, else False
         :param status: string of status
         :param sort_by_modification_time: optional - enum (asc,desc)
         :param sort_by_creation_time: optional - enum (asc,desc)
@@ -185,41 +188,6 @@ class CoreClient(BaseClient):
                 'value': incident_id_list
             })
 
-        if lte_creation_time:
-            filters.append({
-                'field': 'creation_time',
-                'operator': 'lte',
-                'value': date_to_timestamp(lte_creation_time, TIME_FORMAT)
-            })
-
-        if gte_creation_time:
-            filters.append({
-                'field': 'creation_time',
-                'operator': 'gte',
-                'value': date_to_timestamp(gte_creation_time, TIME_FORMAT)
-            })
-
-        if lte_modification_time:
-            filters.append({
-                'field': 'modification_time',
-                'operator': 'lte',
-                'value': date_to_timestamp(lte_modification_time, TIME_FORMAT)
-            })
-
-        if gte_modification_time:
-            filters.append({
-                'field': 'modification_time',
-                'operator': 'gte',
-                'value': date_to_timestamp(gte_modification_time, TIME_FORMAT)
-            })
-
-        if gte_creation_time_milliseconds > 0:
-            filters.append({
-                'field': 'creation_time',
-                'operator': 'gte',
-                'value': gte_creation_time_milliseconds
-            })
-
         if status:
             filters.append({
                 'field': 'status',
@@ -227,15 +195,69 @@ class CoreClient(BaseClient):
                 'value': status
             })
 
+        if starred and starred_incidents_fetch_window:
+            filters.append({
+                'field': 'starred',
+                'operator': 'eq',
+                'value': True
+            })
+            filters.append({
+                'field': 'creation_time',
+                'operator': 'gte',
+                'value': starred_incidents_fetch_window
+            })
+            if demisto.command() == 'fetch-incidents':
+                if len(filters) > 0:
+                    request_data['filters'] = filters
+                incidents = self.handle_fetch_starred_incidents(limit, page_number, request_data)
+                return incidents
+
+        else:
+            if lte_creation_time:
+                filters.append({
+                    'field': 'creation_time',
+                    'operator': 'lte',
+                    'value': date_to_timestamp(lte_creation_time, TIME_FORMAT)
+                })
+
+            if gte_creation_time:
+                filters.append({
+                    'field': 'creation_time',
+                    'operator': 'gte',
+                    'value': date_to_timestamp(gte_creation_time, TIME_FORMAT)
+                })
+
+            if lte_modification_time:
+                filters.append({
+                    'field': 'modification_time',
+                    'operator': 'lte',
+                    'value': date_to_timestamp(lte_modification_time, TIME_FORMAT)
+                })
+
+            if gte_modification_time:
+                filters.append({
+                    'field': 'modification_time',
+                    'operator': 'gte',
+                    'value': date_to_timestamp(gte_modification_time, TIME_FORMAT)
+                })
+
+            if gte_creation_time_milliseconds > 0:
+                filters.append({
+                    'field': 'creation_time',
+                    'operator': 'gte',
+                    'value': gte_creation_time_milliseconds
+                })
+
         if len(filters) > 0:
             request_data['filters'] = filters
+
         res = self._http_request(
             method='POST',
             url_suffix='/incidents/get_incidents/',
             json_data={'request_data': request_data},
             timeout=self.timeout
         )
-        incidents = res.get('reply').get('incidents', [])
+        incidents = res.get('reply', {}).get('incidents', [])
 
         return incidents
 
