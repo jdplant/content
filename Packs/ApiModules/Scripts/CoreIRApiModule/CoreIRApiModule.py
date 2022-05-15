@@ -261,6 +261,74 @@ class CoreClient(BaseClient):
 
         return incidents
 
+    @staticmethod
+    def filter_and_save_unseen_starred_incident(incidents: List, limit: int, number_of_already_filtered_incidents: int) -> List:
+        """
+        Filters starred incidents that were seen already and saves the unseen incidents to LastRun object.
+        :param incidents: List of incident - must be list
+        :param limit: the maximum number of incident per fetch
+        :param number_of_already_filtered_incidents: number of incidents that were fetched already
+        :return: the filtered incidents.
+        """
+        last_run_obj = demisto.getLastRun()
+        fetched_starred_incidents = last_run_obj.pop('fetched_starred_incidents', {})
+        filtered_incidents = []
+        for incident in incidents:
+            incident_id = incident.get('incident_id')
+            if incident_id in fetched_starred_incidents:
+                demisto.debug(f'incident (ID {incident_id}) was already fetched in the past.')
+                continue
+            fetched_starred_incidents[incident_id] = True
+            filtered_incidents.append(incident)
+            number_of_already_filtered_incidents += 1
+            if number_of_already_filtered_incidents >= limit:
+                break
+
+        last_run_obj['fetched_starred_incidents'] = fetched_starred_incidents
+        demisto.setLastRun(last_run_obj)
+        return filtered_incidents
+
+    def handle_fetch_starred_incidents(self, limit: int, page_number: int, request_data: dict) -> List:
+        """
+        handles pagination and filter of starred incidents that were fetched.
+        :param limit: the maximum number of incident per fetch
+        :param page_number: page number
+        :param request_data: the api call request data
+        :return: the filtered starred incidents.
+        """
+        res = self._http_request(
+            method='POST',
+            url_suffix='/incidents/get_incidents/',
+            json_data={'request_data': request_data},
+            timeout=self.timeout
+        )
+        raw_incidents = res.get('reply', {}).get('incidents', [])
+
+        # we want to avoid duplications of starred incidents in the fetch-incident command (we fetch all incidents
+        # in the fetch window).
+        filtered_incidents = self.filter_and_save_unseen_starred_incident(raw_incidents, limit, 0)
+
+        # we want to support pagination on starred incidents.
+        while len(filtered_incidents) < limit:
+            page_number += 1
+            search_from = page_number * limit
+            search_to = search_from + limit
+            request_data['search_from'] = search_from
+            request_data['search_to'] = search_to
+
+            res = self._http_request(
+                method='POST',
+                url_suffix='/incidents/get_incidents/',
+                json_data={'request_data': request_data},
+                timeout=self.timeout
+            )
+            raw_incidents = res.get('reply', {}).get('incidents', [])
+            if not raw_incidents:
+                break
+            filtered_incidents += self.filter_and_save_unseen_starred_incident(raw_incidents, limit, len(filtered_incidents))
+
+        return filtered_incidents
+
     def get_incident_extra_data(self, incident_id, alerts_limit=1000):
         """
         Returns incident by id
