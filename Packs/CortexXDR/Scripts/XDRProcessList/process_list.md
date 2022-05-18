@@ -1,0 +1,55 @@
+### Process list
+|Name|CPU|Memory|
+|---|---|---|
+| System Idle Process | 50.0 | 8192 |
+| System | 0.0 | 32768 |
+| Registry | 0.0 | 21381120 |
+| smss.exe | 0.0 | 409600 |
+| svchost.exe | 0.0 | 612417536 |
+| csrss.exe | 0.0 | 6385664 |
+| sihost.exe | 0.0 | 13398016 |
+| wininit.exe | 0.0 | 1675264 |
+| winlogon.exe | 0.0 | 4898816 |
+| services.exe | 0.0 | 7225344 |
+| lsass.exe | 0.0 | 12431360 |
+| fontdrvhost.exe | 0.0 | 2990080 |
+| LogonUI.exe | 0.0 | 45981696 |
+| dwm.exe | 0.0 | 46284800 |
+| msdtc.exe | 0.0 | 1855488 |
+| MemCompression | 0.0 | 121462784 |
+| spoolsv.exe | 0.0 | 5308416 |
+| ShellExperienceHost.exe | 0.0 | 2846720 |
+| ctfmon.exe | 0.0 | 4567040 |
+| taskhostw.exe | 0.0 | 9584640 |
+| xdrcollectorsvc.exe | 0.0 | 24178688 |
+| VGAuthService.exe | 0.0 | 2154496 |
+| vmtoolsd.exe | 0.0 | 15671296 |
+| cyserver.exe | 50.15 | 287109120 |
+| rdpclip.exe | 0.0 | 3555328 |
+| dllhost.exe | 0.0 | 4009984 |
+| explorer.exe | 0.0 | 82018304 |
+| WmiPrvSE.exe | 0.0 | 16723968 |
+| tlaworker.exe | 0.0 | 3907584 |
+| GoogleCrashHandler64.exe | 0.0 | 278528 |
+| GoogleCrashHandler.exe | 0.0 | 212992 |
+| msedge.exe | 0.0 | 149360640 |
+| RuntimeBroker.exe | 0.0 | 80703488 |
+| SgrmBroker.exe | 0.0 | 4886528 |
+| filebeat.exe | 0.0 | 23638016 |
+| SearchIndexer.exe | 0.0 | 18427904 |
+| Microsoft.Photos.exe | 0.0 | 1126400 |
+| StartMenuExperienceHost.exe | 0.0 | 2772992 |
+| SearchApp.exe | 0.0 | 1552384 |
+| cortex-xdr-payload.exe | 0.0 | 37744640 |
+| YourPhone.exe | 0.0 | 1437696 |
+| cytray.exe | 0.0 | 2449408 |
+| SecurityHealthSystray.exe | 0.0 | 3010560 |
+| SecurityHealthService.exe | 0.0 | 7712768 |
+| vm3dservice.exe | 0.0 | 1585152 |
+| conhost.exe | 0.0 | 20090880 |
+| MoUsoCoreWorker.exe | 0.0 | 22913024 |
+| powershell_ise.exe | 0.0 | 69595136 |
+| Cortana.exe | 0.0 | 3657728 |
+| Taskmgr.exe | 0.0 | 22298624 |
+| UserOOBEBroker.exe | 0.0 | 4644864 |
+| OneDrive.exe | 0.0 | 105025536 |
