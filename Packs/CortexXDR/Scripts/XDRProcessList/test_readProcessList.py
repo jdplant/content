@@ -2,7 +2,7 @@ import json
 import pytest
 
 
-@pytest.mark.parametrize('_return_value , res', [('process_list.json', 'process_list.md')])
+@pytest.mark.parametrize('_return_value , res', [('test_data/process_list.json', 'test_data/process_list.md')])
 def test_entries_to_markdown(_return_value, res):
     from readProcessList import entries_to_markdown
     with open(_return_value, 'r') as process_list_from_xdr:
@@ -12,3 +12,17 @@ def test_entries_to_markdown(_return_value, res):
     with open(res, 'r') as res_md:
         res_md = res_md.read()
     assert res_md == entries_as_md
+
+
+@pytest.mark.parametrize('script_results , res', [
+    ('test_data/filter_script_results.json', 'test_data/script_results.json'),
+    ('test_data/filter_script_results_one_obj.json', 'test_data/res_filter_script_results_one_obj.json')
+])
+def test_find_last_process_list_script(script_results, res):
+    from readProcessList import find_last_process_list_script
+    with open('test_data/script_results.json') as f:
+        script_results = json.load(f)
+    script_result = find_last_process_list_script(script_results)
+    with open('test_data/filter_script_results.json', 'r') as res:
+        filter_res = json.load(res)
+    assert filter_res == script_result
