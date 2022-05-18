@@ -27,6 +27,20 @@ def entries_to_markdown(entry_list: List[str]):
     return md
 
 
+def find_last_process_list_script(script_results):
+    for script_result in reversed(script_results):
+        if not (results := script_result.get('results', [])):
+            continue
+        result = results[-1]
+        if not (_return_value := result.get('_return_value', [])):
+            continue
+        if 'Name' and 'Memoty' and 'CPU' in _return_value[0]:
+            return _return_value
+    return None
+
+
+
+
 def read_xdr_context():
     CONTEXT_PATH_TO_READ_PROCESS_FILE_NAME_FROM_XDR_Data = "PaloAltoNetworksXDR.ScriptResult"
     # can be a dict if we have only one scriptResult
@@ -44,8 +58,8 @@ def read_xdr_context():
     return ""
 
 def main():
-    print('hello')
-
+    _return_value = find_last_process_list_script(script_results)
+    entries_to_markdown(_return_value)
 
 if __name__ == '__main__':
     main()
