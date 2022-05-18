@@ -5,12 +5,11 @@ from CommonServerPython import *
 
 def entries_to_markdown(entry_list: List[str]):
     """
-       Args:
+   Args:
         entry_list (List[str]): the _return_value array from demisto context
 
     Returns:
         str: a markdown table to be displayed on the layout.
-
     """
     process_list = []
     for entry in entry_list:
@@ -28,6 +27,13 @@ def entries_to_markdown(entry_list: List[str]):
 
 
 def find_last_process_list_script(script_results):
+    """
+    Args:
+        script_results (List | dict): script results after running XDRIR script
+
+    Returns:
+        list | None: if a proper result was find return the _return_value else None
+    """
     if not isinstance(script_results, list):
         [script_results]
     for script_result in reversed(script_results):
