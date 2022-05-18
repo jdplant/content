@@ -27,6 +27,21 @@ def entries_to_markdown(entry_list: List[str]):
     return md
 
 
+def read_xdr_context():
+    CONTEXT_PATH_TO_READ_PROCESS_FILE_NAME_FROM_XDR_Data = "PaloAltoNetworksXDR.ScriptResult"
+    # can be a dict if we have only one scriptResult
+    script_results = demisto.get(demisto.context(), CONTEXT_PATH_TO_READ_PROCESS_FILE_NAME_FROM_XDR_Data)
+    if not isinstance(script_results, list):
+        script_results = [script_results]
+
+
+    last_executed_script = script_results[-1]
+    results = last_executed_script.get('results', [])
+    demisto.info(f'\n\n{script_results}\n {os.getcwd()}\n')
+    # if command_results:
+    #     return('\n'.join(map(str,command_results)))
+    # else:
+    return ""
 
 def main():
     print('hello')
